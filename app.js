@@ -49,6 +49,7 @@ function loadFeeds() {
             feedsProcessed++;
             if (feedsProcessed === feeds.length) {
                 allArticles.sort((a, b) => b.pubDate - a.pubDate);
+                displayCategoryFilters();
                 displayArticles();
             }
         });
@@ -73,6 +74,7 @@ function extractAndStoreArticles(xmlDoc, url) {
     let feedColor = colors[feedIndex % colors.length];
 
     items.forEach(item => {
+        let categories = Array.from(item.querySelectorAll('category')).map(cat => cat.textContent);
         let title = item.querySelector('title') ? item.querySelector('title').textContent : 'No Title';
         let descriptionElement = item.querySelector('description');
         let description = descriptionElement ? descriptionElement.textContent : 'No description available.';
@@ -88,17 +90,19 @@ function extractAndStoreArticles(xmlDoc, url) {
             pubDate,
             author,
             imageUrl,
+            categories,
             feedColor,
             sourceUrl: url
         });
     });
 }
 
-function displayArticles() {
+
+function displayArticles(articles = allArticles) {
     const articlesContainer = document.getElementById('articles-container');
     articlesContainer.innerHTML = '';
 
-    allArticles.forEach(article => {
+    articles.forEach(article => {
         let articleElement = document.createElement('div');
         articleElement.className = 'article-card';
         articleElement.style.borderColor = article.feedColor;
@@ -120,6 +124,7 @@ function displayArticles() {
     });
 }
 
+
 function displayFeedList() {
     const feedList = document.getElementById('feed-list');
     feedList.innerHTML = '';
@@ -138,3 +143,43 @@ function displayFeedList() {
         feedList.appendChild(li);
     });
 }
+
+function displayCategoryFilters() {
+    const allCategories = new Set();
+    allArticles.forEach(article => {
+        article.categories.forEach(category => allCategories.add(category));
+    });
+
+    const filterContainer = document.getElementById('category-filters');
+    filterContainer.innerHTML = '';
+
+    // Create dropdown
+    const dropdown = document.createElement('select');
+    dropdown.id = 'category-dropdown';
+    dropdown.onchange = filterArticlesByCategory;
+
+    // Default option to show all
+    const defaultOption = document.createElement('option');
+    defaultOption.textContent = 'All Categories';
+    defaultOption.value = 'all';
+    dropdown.appendChild(defaultOption);
+
+    // Options for each category
+    allCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        dropdown.appendChild(option);
+    });
+
+    filterContainer.appendChild(dropdown);
+}
+
+function filterArticlesByCategory() {
+    const selectedCategory = document.getElementById('category-dropdown').value;
+    const filteredArticles = selectedCategory === 'all' ? allArticles : allArticles.filter(article =>
+        article.categories.includes(selectedCategory)
+    );
+    displayArticles(filteredArticles);
+}
+
