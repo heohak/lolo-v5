@@ -1,0 +1,144 @@
+/* Basic reset */
+body, html { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+
+/* Header styling */
+header {
+    background: #333;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+}
+#feed-list {
+    list-style: none;
+    padding: 0;
+}
+
+#feed-list li {
+    margin: 10px 0;
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    color: #333333;
+}
+
+.feed-edit, .feed-remove {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Articles container */
+#articles-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+/* Individual article card styling */
+.article-card {
+    width: 30%;
+    margin: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+}
+
+.article-image img {
+    width: 100%;
+    height: auto;
+}
+
+.article-content {
+    padding: 15px;
+}
+
+.article-title {
+    margin-top: 0;
+    color: #333;
+}
+
+.article-description {
+    font-size: 14px;
+    color: #666;
+}
+
+.article-feed {
+    padding: 5px;
+    margin-top: 5px;
+    color: #171616;
+    text-align: center;
+    font-size: 12px;
+    border-radius: 5px;
+}
+
+
+.article-meta, .article-tags {
+    font-size: 12px;
+    color: #999;
+    margin-top: 10px;
+}
+
+.tag {
+    background-color: #eee;
+    padding: 2px 8px;
+    border-radius: 16px;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.article-author, .article-date {
+    font-weight: bold;
+}
+
+/* Modal styling */
+#modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+
+#modal.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 600px;
+}
+
+.close {
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+
+@media (max-width: 768px) {
+    .article-card {
+        width: 48%;
+    }
+}
+
+@media (max-width: 480px) {
+    .article-card {
+        width: 100%;
+    }
+}

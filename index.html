@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lolo v5</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>Lolo v5</h1>
+    <div id="feed-manager">
+        <input type="text" id="feed-url" placeholder="Add new feed URL">
+        <button onclick="addFeed()">Add Feed</button>
+    </div>
+    <ul id="feed-list"></ul>
+</header>
+<main id="articles-container">
+</main>
+<div id="modal" class="hidden">
+    <div class="modal-content">
+        <span onclick="closeModal()" class="close">&times;</span>
+        <div id="article-content"></div>
+    </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
