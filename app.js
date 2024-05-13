@@ -34,7 +34,9 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.closeModal = function() {
-        document.getElementById('modal').classList.remove('show');
+        const modal = document.getElementById('modal');
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
     };
 });
 
@@ -97,7 +99,6 @@ function extractAndStoreArticles(xmlDoc, url) {
     });
 }
 
-
 function displayArticles(articles = allArticles) {
     const articlesContainer = document.getElementById('articles-container');
     articlesContainer.innerHTML = '';
@@ -107,6 +108,7 @@ function displayArticles(articles = allArticles) {
         articleElement.className = 'article-card';
         articleElement.style.borderColor = article.feedColor;
 
+        // Create the article content with clickable elements
         articleElement.innerHTML = `
             <div class="article-image">
                 <img src="${article.imageUrl}" alt="Image">
@@ -120,14 +122,52 @@ function displayArticles(articles = allArticles) {
                 <div class="article-feed" style="background-color: ${article.feedColor};">Source: ${article.sourceUrl}</div>
             </div>
         `;
+
+        // Append the article card to the container
         articlesContainer.appendChild(articleElement);
+
+        // Add event listeners to title, description, and image for opening the article
+        const img = articleElement.querySelector('.article-image img');
+        const title = articleElement.querySelector('.article-title');
+        const description = articleElement.querySelector('.article-description');
+
+        [img, title, description].forEach(element => {
+            element.addEventListener('click', () => openArticle(article.link));
+        });
     });
 }
 
+function openArticle(url) {
+    const modal = document.getElementById('modal');
+    const articleContent = document.getElementById('article-content');
+    articleContent.innerHTML = 'Loading...';
+
+    fetch('http://localhost:3000/webparser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: url })
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            articleContent.innerHTML = data.content || 'No content available'; // Display content or a default message
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        })
+        .catch(error => {
+            console.error('Error loading article:', error);
+            articleContent.innerHTML = 'Failed to load content.';
+        });
+}
 
 function displayFeedList() {
     const feedList = document.getElementById('feed-list');
     feedList.innerHTML = '';
+
     let feeds = JSON.parse(localStorage.getItem('feeds') || '[]');
     feeds.forEach((feed, index) => {
         let li = document.createElement('li');
@@ -153,18 +193,15 @@ function displayCategoryFilters() {
     const filterContainer = document.getElementById('category-filters');
     filterContainer.innerHTML = '';
 
-    // Create dropdown
     const dropdown = document.createElement('select');
     dropdown.id = 'category-dropdown';
     dropdown.onchange = filterArticlesByCategory;
 
-    // Default option to show all
     const defaultOption = document.createElement('option');
     defaultOption.textContent = 'All Categories';
     defaultOption.value = 'all';
     dropdown.appendChild(defaultOption);
 
-    // Options for each category
     allCategories.forEach(category => {
         const option = document.createElement('option');
         option.value = category;
@@ -182,4 +219,3 @@ function filterArticlesByCategory() {
     );
     displayArticles(filteredArticles);
 }
-
