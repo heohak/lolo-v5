@@ -1,0 +1,11 @@
+@media (max-width: 768px) {
+    .article-card {
+        width: 48%;
+    }
+}
+
+@media (max-width: 480px) {
+    .article-card {
+        width: 100%;
+    }
+}

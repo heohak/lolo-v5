@@ -1,8 +1,8 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     displayFeedList();
     loadFeeds();
-
-    window.addFeed = function() {
+    // Adds a new feed URL to local storage and reloads the feed list.
+    window.addFeed = function () {
         const url = document.getElementById('feed-url').value;
         if (url && !JSON.parse(localStorage.getItem('feeds') || '[]').includes(url)) {
             let feeds = JSON.parse(localStorage.getItem('feeds') || '[]');
@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         document.getElementById('feed-url').value = '';
     };
-
-    window.editFeed = function(index) {
+    // Edits an existing feed URL and updates local storage and UI.
+    window.editFeed = function (index) {
         let feeds = JSON.parse(localStorage.getItem('feeds'));
         const newUrl = prompt("Edit the feed URL:", feeds[index]);
         if (newUrl && newUrl !== feeds[index]) {
@@ -24,16 +24,16 @@ document.addEventListener('DOMContentLoaded', function() {
             loadFeeds();
         }
     };
-
-    window.removeFeed = function(index) {
+    // Removes a feed URL from local storage and updates the UI.
+    window.removeFeed = function (index) {
         let feeds = JSON.parse(localStorage.getItem('feeds'));
         feeds.splice(index, 1);
         localStorage.setItem('feeds', JSON.stringify(feeds));
         displayFeedList();
         loadFeeds();
     };
-
-    window.closeModal = function() {
+    // Closes the modal and resets its visibility.
+    window.closeModal = function () {
         const modal = document.getElementById('modal');
         modal.classList.remove('show');
         modal.setAttribute('aria-hidden', 'true');
@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 let allArticles = [];
 
+// Loads feeds from local storage and processes each one.
 function loadFeeds() {
     let feeds = JSON.parse(localStorage.getItem('feeds') || '[]');
     allArticles = [];
@@ -58,6 +59,7 @@ function loadFeeds() {
     });
 }
 
+// Fetches data from a feed URL and parses the XML.
 function loadFeed(url, callback) {
     fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`)
         .then(response => response.text())
@@ -69,6 +71,7 @@ function loadFeed(url, callback) {
         });
 }
 
+// Extracts articles from the XML document and stores them in an array.
 function extractAndStoreArticles(xmlDoc, url) {
     let items = xmlDoc.querySelectorAll('item');
     let feedIndex = JSON.parse(localStorage.getItem('feeds')).indexOf(url);
@@ -83,7 +86,7 @@ function extractAndStoreArticles(xmlDoc, url) {
         let pubDate = item.querySelector('pubDate') ? new Date(item.querySelector('pubDate').textContent) : new Date();
         let author = item.querySelector('author') ? item.querySelector('author').textContent : 'Unknown';
         let imageElement = item.querySelector('media\\:content, content');
-        let imageUrl = imageElement ? imageElement.getAttribute('url') : 'placeholder.jpg';
+        let imageUrl = imageElement ? imageElement.getAttribute('url') : 'assets/placeholder.jpg';
 
         allArticles.push({
             title,
@@ -99,6 +102,7 @@ function extractAndStoreArticles(xmlDoc, url) {
     });
 }
 
+// Displays all articles in the UI.
 function displayArticles(articles = allArticles) {
     const articlesContainer = document.getElementById('articles-container');
     articlesContainer.innerHTML = '';
@@ -108,7 +112,6 @@ function displayArticles(articles = allArticles) {
         articleElement.className = 'article-card';
         articleElement.style.borderColor = article.feedColor;
 
-        // Create the article content with clickable elements
         articleElement.innerHTML = `
             <div class="article-image">
                 <img src="${article.imageUrl}" alt="Image">
@@ -123,10 +126,8 @@ function displayArticles(articles = allArticles) {
             </div>
         `;
 
-        // Append the article card to the container
         articlesContainer.appendChild(articleElement);
 
-        // Add event listeners to title, description, and image for opening the article
         const img = articleElement.querySelector('.article-image img');
         const title = articleElement.querySelector('.article-title');
         const description = articleElement.querySelector('.article-description');
@@ -137,6 +138,7 @@ function displayArticles(articles = allArticles) {
     });
 }
 
+// Opens a modal to display an article using the provided URL.
 function openArticle(url) {
     const modal = document.getElementById('modal');
     const articleContent = document.getElementById('article-content');
@@ -147,14 +149,14 @@ function openArticle(url) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ url: url })
+        body: JSON.stringify({url: url})
     })
         .then(response => {
             if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
         })
         .then(data => {
-            articleContent.innerHTML = data.content || 'No content available'; // Display content or a default message
+            articleContent.innerHTML = data.content || 'No content available';
             modal.classList.add('show');
             modal.setAttribute('aria-hidden', 'false');
         })
@@ -164,6 +166,7 @@ function openArticle(url) {
         });
 }
 
+// Displays the list of feeds in the UI.
 function displayFeedList() {
     const feedList = document.getElementById('feed-list');
     feedList.innerHTML = '';
@@ -171,19 +174,34 @@ function displayFeedList() {
     let feeds = JSON.parse(localStorage.getItem('feeds') || '[]');
     feeds.forEach((feed, index) => {
         let li = document.createElement('li');
-        li.textContent = feed;
+
+        let urlContainer = document.createElement('div');
+        urlContainer.className = 'url-container';
+        let urlLink = document.createElement('a');
+        urlLink.href = feed;
+        urlLink.textContent = feed;
+        urlContainer.appendChild(urlLink);
+
+        let buttonContainer = document.createElement('div');
+        buttonContainer.className = 'button-container';
+
         let editButton = document.createElement('button');
         editButton.textContent = 'Edit';
         editButton.onclick = () => window.editFeed(index);
+        buttonContainer.appendChild(editButton);
+
         let removeButton = document.createElement('button');
         removeButton.textContent = 'Remove';
         removeButton.onclick = () => window.removeFeed(index);
-        li.appendChild(editButton);
-        li.appendChild(removeButton);
+        buttonContainer.appendChild(removeButton);
+
+        li.appendChild(urlContainer);
+        li.appendChild(buttonContainer);
         feedList.appendChild(li);
     });
 }
 
+// Displays category filters for articles.
 function displayCategoryFilters() {
     const allCategories = new Set();
     allArticles.forEach(article => {
@@ -212,6 +230,7 @@ function displayCategoryFilters() {
     filterContainer.appendChild(dropdown);
 }
 
+// Filters articles by selected category.
 function filterArticlesByCategory() {
     const selectedCategory = document.getElementById('category-dropdown').value;
     const filteredArticles = selectedCategory === 'all' ? allArticles : allArticles.filter(article =>

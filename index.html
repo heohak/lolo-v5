@@ -2,28 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Lolo v5</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/feed-list.css">
+    <link rel="stylesheet" href="css/article.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
 </head>
 <body>
 <header>
     <h1>Lolo v5</h1>
     <div id="feed-manager">
-        <input type="text" id="feed-url" placeholder="Add new feed URL">
+        <input id="feed-url" placeholder="Add new feed URL" type="text">
         <button onclick="addFeed()">Add Feed</button>
     </div>
-    <div id="category-filters" style="margin-top: 10px;">
+    <div id="category-filters">
     </div>
     <ul id="feed-list"></ul>
 </header>
 <main id="articles-container"></main>
-<div id="modal" class="hidden">
+<div class="hidden" id="modal">
     <div class="modal-content">
-        <span onclick="closeModal()" class="close">&times;</span>
+        <span class="close" onclick="closeModal()">&times;</span>
         <div id="article-content"></div>
     </div>
 </div>
-<script src="app.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

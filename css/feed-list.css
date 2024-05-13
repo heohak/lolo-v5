@@ -1,0 +1,48 @@
+#feed-list {
+    list-style: none;
+    padding: 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#feed-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px;
+    background: #ffffff;
+    border-radius: 5px;
+    color: #333333;
+    max-width: 100%;
+}
+
+#category-filters {
+    margin-top: 10px;
+}
+
+#feed-list .url-container {
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+}
+
+#feed-list .url-container a {
+    color: #333333;
+    text-decoration: none;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+#feed-list .button-container {
+    display: flex;
+    gap: 5px;
+}
+
+#feed-list button {
+    flex-shrink: 0;
+}
