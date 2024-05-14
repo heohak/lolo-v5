@@ -36,8 +36,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Closes the modal and resets its visibility.
     window.closeModal = function () {
         const modal = document.getElementById('modal');
+        const modalContent = modal.querySelector('.modal-content');
         modal.classList.remove('show');
         modal.setAttribute('aria-hidden', 'true');
+        modalContent.classList.remove('loading');
     };
 });
 
@@ -152,7 +154,12 @@ function displayArticles(articles = allArticles) {
 function openArticle(url) {
     const modal = document.getElementById('modal');
     const articleContent = document.getElementById('article-content');
-    articleContent.innerHTML = 'Loading...';
+    const modalContent = modal.querySelector('.modal-content');
+
+    articleContent.innerHTML = '';
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    modalContent.classList.add('loading');
 
     fetch('https://lolo-v5.onrender.com/webparser', {
         method: 'POST',
@@ -167,12 +174,12 @@ function openArticle(url) {
         })
         .then(data => {
             articleContent.innerHTML = data.content || 'No content available';
-            modal.classList.add('show');
-            modal.setAttribute('aria-hidden', 'false');
+            modalContent.classList.remove('loading');
         })
         .catch(error => {
             console.error('Error loading article:', error);
             articleContent.innerHTML = 'Failed to load content.';
+            modalContent.classList.remove('loading');
         });
 }
 
