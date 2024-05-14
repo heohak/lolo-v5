@@ -154,7 +154,7 @@ function openArticle(url) {
     const articleContent = document.getElementById('article-content');
     articleContent.innerHTML = 'Loading...';
 
-    fetch('http://localhost:3000/webparser', {
+    fetch('https://lolo-v5.onrender.com/webparser', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
