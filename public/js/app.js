@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    initializeDefaultFeed();
     displayFeedList();
     loadFeeds();
     // Adds a new feed URL to local storage and reloads the feed list.
@@ -40,12 +41,21 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 });
 
+function initializeDefaultFeed() {
+    if (!localStorage.getItem('feeds')) {
+        let defaultFeed = ['https://flipboard.com/@raimoseero/feed-nii8kd0sz.rss'];
+        localStorage.setItem('feeds', JSON.stringify(defaultFeed));
+    }
+}
+
 let allArticles = [];
 
 // Loads feeds from local storage and processes each one.
 function loadFeeds() {
     let feeds = JSON.parse(localStorage.getItem('feeds') || '[]');
     allArticles = [];
+    const articlesContainer = document.getElementById('articles-container');
+    articlesContainer.innerHTML = '';
     let feedsProcessed = 0;
     feeds.forEach(url => {
         loadFeed(url, () => {
