@@ -83,12 +83,17 @@ function loadFeed(url, callback) {
         });
 }
 
+// Generates a distinct color based on an index
+function generateColor(index) {
+    const hue = (index * 137.508) % 360;
+    return `hsl(${hue}, 70%, 50%)`;
+}
+
 // Extracts articles from the XML document and stores them in an array.
 function extractAndStoreArticles(xmlDoc, url) {
     let items = xmlDoc.querySelectorAll('item');
     let feedIndex = JSON.parse(localStorage.getItem('feeds')).indexOf(url);
-    let colors = ['#3c988c', '#1c80dc', '#b48537', '#7e1f79', '#ffdead'];
-    let feedColor = colors[feedIndex % colors.length];
+    const feedColor = generateColor(feedIndex);
 
     items.forEach(item => {
         let categories = Array.from(item.querySelectorAll('category')).map(cat => cat.textContent);
